@@ -1,36 +1,108 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import "../app.css";
 
-function input(){
-    const [name,setName]=useState("");
-    const [email,setEmail]=useState("");
-    const [displayName,setDisplayName]=useState("");
-    const [displayEmail,setDisplayEmail]=useState("");
-    function handleClick(){
-        setDisplayName(name);
-        setDisplayEmail(email);
-    }
+
+function Form(){
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [reg, setReg] = useState("");
+    const [city, setCity] = useState("");
+    const [option, setOption] = useState("");
+    const [submittedData, setSubmittedData] = useState(() => {
+        const savedData = localStorage.getItem("submittedData");
+        return savedData ? JSON.parse(savedData) : [];
+    });
+
+    useEffect(() => {
+        localStorage.setItem("submittedData", JSON.stringify(submittedData));
+    }, [submittedData]);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const newEntry = {
+            name,
+            email,
+            reg,
+            city,
+            option,
+        };
+
+      setSubmittedData((prev)=>[...prev,newEntry]);
+        setName("");
+        setEmail("");
+        setReg("");
+        setCity("");
+        setOption("");
+    };
+
     return (
-        <div>
-            {/* <h1></h1> */}
-            <label>Enter Your name: </label><input
-            type="text"
-            value={name}
-            onChange={(e)=>setName(e.target.value)}
-            ></input>
-            {/* <h1>Email:</h1>  */}
-            <br></br>
-            <label>Enter Email: </label><input
-            type="email"
-            value={email}
-            onChange={(e)=>setEmail(e.target.value)}
-            ></input>
-            <br></br>
-            <button onClick={handleClick}>Submit</button>
+        <>
+        <form onSubmit={handleSubmit}>
+            <div>
+                <label>Enter your Name</label>
+                <input 
+                    type="text" 
+                    value={name} 
+                    onChange={(e) => setName(e.target.value)} 
+                    placeholder="Name"
+                />
+            </div>
+            <div>
+                <label>Enter your Email</label>
+                <input 
+                    type="email" 
+                    value={email} 
+                    onChange={(e) => setEmail(e.target.value)} 
+                    placeholder="Email"
+                />
+            </div>
+            <div>
+                <label>Registration</label>
+                <input 
+                    type="text" 
+                    value={reg} 
+                    onChange={(e) => setReg(e.target.value)} 
+                    placeholder="Registration"
+                />
+            </div>
+            <div>
+                <label>City</label>
+                <input 
+                    type="text" 
+                    value={city} 
+                    onChange={(e) => setCity(e.target.value)} 
+                    placeholder="City"
+                />
+            </div>
+            <div>
+                <label>Profession</label>
+                <select value={option} onChange={(e) => setOption(e.target.value)}>
+                    <option value="">Select an option</option>
+                    <option value="Student">Student</option>
+                    <option value="Scholar">Scholar</option>
+                    <option value="Teacher">Teacher</option>
+                </select>
+            </div>
+            <button type="submit">Submit</button>
+        </form>
 
-            <h2>{displayName}</h2>
-            <h2>{displayEmail}</h2>
-        </div>
+        {submittedData.length > 0 && (
+            <div style={{ marginTop: "20px", border: "1px solid #ccc", padding: "10px" ,display:"flex",flexDirection:"row",gap:"10px"}}>
+               <h2>Submitted Details</h2>
+                {submittedData.map((entry) => (
+                    <div  style={{border: "1px solid #ccc", padding: "10px"}}>
+                        <p><strong>Name:</strong> {entry.name}</p>
+                        <p><strong>Email:</strong> {entry.email}</p>
+                        <p><strong>Registration:</strong> {entry.reg}</p>
+                        <p><strong>City:</strong> {entry.city}</p>
+                        <p><strong>Profession:</strong> {entry.option}</p>
+                    </div>
+                ))}
+            </div>
+        )}
+        </>
     )
+    
 }
 
-export default input;
+export default Form;
